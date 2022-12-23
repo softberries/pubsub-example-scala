@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "pubsubExampleScala.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "pubsubExampleScala.name" . }}
+    helm.sh/chart: {{ include "pubsubExampleScala.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "pubsubExampleScala.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "pubsubExampleScala.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.pubsubExampleScala.secretsName }}
+      volumes:
+        - name: google-pubsub-key
+          secret:
+            secretName: google-pubsub-key-global
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          volumeMounts:
+            - name: google-pubsub-key
+              mountPath: /var/secrets/googlepubsub
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8089
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: http
+            initialDelaySeconds: 30
+            timeoutSeconds: 60
+            periodSeconds: 5
+            failureThreshold: 12
+          readinessProbe:
+            httpGet:
+              path: /healthcheck
+              port: http
+            initialDelaySeconds: 30
+            timeoutSeconds: 60
+            periodSeconds: 5
+            failureThreshold: 12
+          envFrom:
+            - configMapRef:
+                name: "global-configmap"
+            - configMapRef:
+                name: "pubsub-example-scala-configmap"
+            - secretRef:
+                name: "global-secrets"
+            - secretRef:
+                name: "pubsub-example-scala-secrets"
+            - secretRef:
+                name: "google-pubsub-key-global"
+          resources:
+            limits:
+              cpu: "1400m"
+              memory: "1536Mi"
+            requests:
+              cpu: "1400m"
+              memory: "1536Mi"
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+    affinity:
+      {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+    tolerations:
+      {{- toYaml . | nindent 8 }}
+    {{- end }}

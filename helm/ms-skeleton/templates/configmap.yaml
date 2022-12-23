@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "pubsub-example-scala-configmap"
+data:
+  JAVA_OPTS: -Xmx1436m -Xms718m
+  HOSTNAME: {{ .Values.pubsubExampleScala.hostname }}
+  PORT: {{ .Values.pubsubExampleScala.port | quote }}
+  SUBSCRIPTION: {{ .Values.pubsubExampleScala.pubSub.subscriptions.subscription }}
+  TOPIC: {{ .Values.pubsubExampleScala.pubSub.topics.topic }}
+

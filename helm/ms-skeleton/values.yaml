@@ -1,0 +1,41 @@
+# Default values for pubsub-example-scala.
+
+replicaCount: 2
+
+image:
+  repository: eu.gcr.io/api-project-236368122719/pubsub-example-scala
+  tag: 0.1.0
+  pullPolicy: IfNotPresent
+
+nameOverride: "pubsub-example-scala"
+fullnameOverride: "pubsub-example-scala"
+
+service:
+  type: ClusterIP
+  port: 80
+
+
+pubsubExampleScala:
+  hostname: 0.0.0.0
+  port: 8089
+  secretsName: gcr-secret
+  postgres:
+    database: pubsub-example-scala
+    host: database
+    username: pubsub-example-scala
+    port: 5432
+    migrateOnStart: false
+  pubSub:
+    subscriptions:
+      subscription: ""
+    topics:
+      topic: ""
+
+
+resources: { }
+
+nodeSelector: { }
+
+tolerations: [ ]
+
+affinity: { }
