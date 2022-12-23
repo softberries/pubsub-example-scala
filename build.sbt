@@ -1,7 +1,7 @@
 import com.typesafe.sbt.SbtNativePackager.autoImport.maintainer
 import com.typesafe.sbt.packager.docker.DockerChmodType
 
-name := "ms-skeleton"
+name := "pubsub-example-scala"
 scalaVersion := "2.13.10"
 
 lazy val catsVersion               = "2.9.0"
