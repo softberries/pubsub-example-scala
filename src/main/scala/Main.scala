@@ -27,8 +27,6 @@ object Main extends IOApp {
 
     val programStream =
       for {
-        //database initialization
-        // transactor <- Stream.resource(infrastructureResourceModule.transactorResource)  // Used for doobie database connections
         client <- Stream.resource(infrastructureResourceModule.client)
 
         backend <- Stream.resource(infrastructureResourceModule.sttpBackendResource)
